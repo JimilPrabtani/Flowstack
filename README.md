@@ -560,7 +560,7 @@ PostgreSQL (parameterised queries only)
 
 ```
 Developer → git push → GitHub Actions (OIDC) → gitleaks + Trivy scan
-                                             → build 7 images
+                                             → build 6 images
                                              → Trivy scan images PRE-push
                                              → push to ECR (immutable tags)
                                              → commit new tags to gitops/k8s/
@@ -582,8 +582,7 @@ Developer → git push → GitHub Actions (OIDC) → gitleaks + Trivy scan
 | Gateway | 3001 | Auth boundary; routes all client requests | ✅ 3001 |
 | Auth | 3002 | Registration, login, JWT issuance, refresh | ❌ internal |
 | Product Service | 3003 | Product catalogue | ❌ internal |
-| Order Service | 3004 | ⚠️ orphaned — unreachable via gateway | ❌ internal |
-| Orders | 3005 | Order creation and history | ❌ internal |
+| Orders | 3005 | Order creation and history (only order service) | ❌ internal |
 | User Service | 3006 | Profiles and addresses | ❌ internal |
 | PostgreSQL | 5432 | 4 databases | 🔒 127.0.0.1 only |
 | Prometheus | 9090 | Metrics | 🔒 127.0.0.1 only |
@@ -631,11 +630,10 @@ devops-ai-playbook/
 │   ├── boutique-microservices/          #    The application
 │   │   ├── .env.example                 #      Environment template (copy to .env)
 │   │   ├── docker-compose.yml           #      Local stack
-│   │   ├── frontend/                    #      React + TypeScript
+│   │   ├── frontend/                    #      React + TypeScript (Flowstack Store)
 │   │   │   └── src/
-│   │   │       ├── pages/Landing/       #        ☀️ Sunfreaks landing page
-│   │   │       ├── styles/sunfreaks.css #        Design system tokens
-│   │   │       ├── theme.ts             #        MUI theme (store)
+│   │   │       ├── pages/               #        Home (= shop), Products, Cart, Checkout, Orders
+│   │   │       ├── theme.ts             #        MUI light minimal theme
 │   │   │       └── services/tokenStore.ts #      In-memory token (never localStorage)
 │   │   ├── backend/
 │   │   │   ├── tsconfig.base.json       #      Compiler options, shared
