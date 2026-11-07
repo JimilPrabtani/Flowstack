@@ -1,34 +1,31 @@
 # Product Service Dockerfile
+#
+# Build context is backend/, matching the other services, so tsconfig.base.json
+# is reachable. Unlike them this one does not copy shared/ — it imports nothing
+# from it — so its output stays flat at dist/index.js.
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+COPY services/product-service/package*.json ./
 RUN npm install
 
-# Copy source code
-COPY . .
+COPY tsconfig.base.json ./
+COPY services/product-service/ ./services/product-service/
 
-# Build TypeScript
-RUN npm run build
+RUN npx tsc --project services/product-service
 
 # Production stage
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy package files and install production dependencies only
-COPY package*.json ./
-RUN npm install --production && npm cache clean --force
+COPY services/product-service/package*.json ./
+RUN npm install --omit=dev && npm cache clean --force
 
-# Copy built application
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/services/product-service/dist ./dist
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodejs -u 1001
-
+RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
 USER nodejs
 
 EXPOSE 3003

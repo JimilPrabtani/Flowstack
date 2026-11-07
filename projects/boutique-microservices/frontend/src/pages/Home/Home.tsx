@@ -24,7 +24,7 @@ import { useCart } from '../../contexts/CartContext';
 import ProductCard from '../../components/common/ProductCard';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 
-const CATEGORIES = ['All', 'Clothing', 'Accessories', 'Bags', 'Jewelry', 'Shoes'];
+const CATEGORIES = ['All', 'Electronics', 'Clothing', 'Home', 'Accessories', 'Shoes'];
 
 const Home: React.FC = () => {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
@@ -35,14 +35,13 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     const loadProducts = async () => {
-      console.log('[Home] Loading products...');
       try {
         const fetched = await productService.getAll();
-        console.log('[Home] Got products:', fetched.length);
         setAllProducts(fetched);
         setDisplayedProducts(fetched.slice(0, 8));
       } catch (error) {
-        console.error('[Home] Error loading products:', error);
+        setAllProducts([]);
+        setDisplayedProducts([]);
       } finally {
         setLoading(false);
       }
@@ -78,66 +77,48 @@ const Home: React.FC = () => {
       {/* Hero Section */}
       <Box
         sx={{
-          background: 'radial-gradient(circle at 60% 30%, rgba(255, 91, 36, 0.15) 0%, rgba(18, 13, 26, 0.95) 70%)',
-          color: '#FAF4E8',
-          py: { xs: 5, md: 8 },
-          borderRadius: '24px',
-          mb: 5,
-          position: 'relative',
-          overflow: 'hidden',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          backgroundColor: '#FFFFFF',
+          color: '#111827',
+          py: { xs: 5, md: 7 },
+          borderRadius: '16px',
+          mb: 4,
+          border: '1px solid #E5E7EB',
         }}
       >
         <Container maxWidth="lg">
           <Grid container spacing={4} alignItems="center">
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Fade in timeout={800}>
+            <Grid size={{ xs: 12, md: 7 }}>
+              <Fade in timeout={500}>
                 <Box>
                   <Box
                     sx={{
-                      fontSize: '0.8rem',
-                      fontWeight: 500,
-                      color: '#FFC24B',
-                      backgroundColor: 'rgba(255, 194, 75, 0.1)',
+                      fontSize: '0.78rem',
+                      fontWeight: 600,
+                      color: '#2563EB',
+                      backgroundColor: '#EFF6FF',
                       display: 'inline-block',
                       px: 2,
                       py: 0.5,
                       borderRadius: '999px',
-                      border: '1px solid rgba(255, 194, 75, 0.25)',
-                      mb: 2.5,
-                      letterSpacing: '0.03em',
+                      border: '1px solid #BFDBFE',
+                      mb: 2,
                     }}
                   >
-                    • BIOTECH & LUXURY BOUTIQUE
+                    FLOWSTACK DEMO STORE
                   </Box>
                   <Typography
                     variant="h1"
                     component="h1"
-                    sx={{
-                      fontWeight: 700,
-                      mb: 2.5,
-                      fontSize: { xs: '2.2rem', md: '3.2rem' },
-                      letterSpacing: '-0.03em',
-                      lineHeight: 1.15,
-                    }}
+                    sx={{ fontWeight: 700, mb: 2, fontSize: { xs: '2rem', md: '2.75rem' } }}
                   >
-                    Discover Modern
-                    <Box component="span" sx={{ color: '#FF5B24', display: 'block' }}>
-                      Elegance & Science
+                    Everyday essentials,
+                    <Box component="span" sx={{ display: 'block', color: '#4B5563' }}>
+                      one simple store.
                     </Box>
                   </Typography>
-                  <Typography
-                    variant="body1"
-                    component="p"
-                    sx={{
-                      mb: 4,
-                      lineHeight: 1.6,
-                      color: 'rgba(214, 200, 180, 0.8)',
-                      maxWidth: '44ch',
-                    }}
-                  >
-                    Indulge in our curated collection of luxury products, 
-                    where clean formulation meets exceptional quality.
+                  <Typography variant="body1" sx={{ mb: 3, color: '#6B7280', maxWidth: '44ch' }}>
+                    Browse products, add to cart, register, login and place orders.
+                    Built as a working microservices demo on Docker + Kubernetes + AWS.
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                     <Button
@@ -170,47 +151,26 @@ const Home: React.FC = () => {
                 </Box>
               </Fade>
             </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Slide in timeout={1000} direction="right">
+            <Grid size={{ xs: 12, md: 5 }}>
+              <Slide in timeout={500} direction="left">
                 <Box
                   sx={{
-                    height: { xs: 240, md: 320 },
-                    background: 'linear-gradient(135deg, rgba(255, 91, 36, 0.25) 0%, rgba(255, 194, 75, 0.15) 50%, rgba(230, 95, 142, 0.2) 100%)',
-                    borderRadius: '20px',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                    backdropFilter: 'blur(20px)',
+                    backgroundColor: '#F3F4F6',
+                    borderRadius: '16px',
+                    border: '1px solid #E5E7EB',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    position: 'relative',
-                    overflow: 'hidden',
                     p: 4,
+                    minHeight: 220,
                   }}
                 >
-                  <Typography
-                    variant="h2"
-                    sx={{
-                      fontWeight: 700,
-                      color: '#FAF4E8',
-                      textAlign: 'center',
-                      fontSize: { xs: '1.8rem', md: '2.4rem' },
-                      letterSpacing: '-0.02em',
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    CLEAN & PROTECTED
+                  <Typography variant="h2" sx={{ fontWeight: 700, textAlign: 'center', fontSize: { xs: '1.4rem', md: '1.8rem' } }}>
+                    8 demo products
                   </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      mt: 1.5,
-                      color: 'rgba(250, 244, 232, 0.7)',
-                      textAlign: 'center',
-                      maxWidth: '30ch',
-                    }}
-                  >
-                    Melanin-rich first, invisible protection with zero white cast.
+                  <Typography variant="body2" sx={{ mt: 1, color: '#6B7280', textAlign: 'center' }}>
+                    Cart, auth, orders and search all work end to end.
                   </Typography>
                 </Box>
               </Slide>
@@ -333,7 +293,7 @@ const Home: React.FC = () => {
                   Free Shipping
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.85rem' }}>
-                  On orders over $500
+                  On orders over $50
                 </Typography>
               </Paper>
             </Grid>

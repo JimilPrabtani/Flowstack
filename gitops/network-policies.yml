@@ -78,8 +78,6 @@ spec:
         - protocol: TCP
           port: 3003
         - protocol: TCP
-          port: 3004
-        - protocol: TCP
           port: 3005
         - protocol: TCP
           port: 3006
@@ -157,13 +155,6 @@ spec:
     - to:
         - podSelector:
             matchLabels:
-              app: order-service
-      ports:
-        - protocol: TCP
-          port: 3004
-    - to:
-        - podSelector:
-            matchLabels:
               app: orders
       ports:
         - protocol: TCP
@@ -192,7 +183,6 @@ spec:
         values:
           - auth
           - product-service
-          - order-service
           - orders
           - user-service
   policyTypes:
@@ -206,9 +196,6 @@ spec:
         - podSelector:
             matchLabels:
               app: orders
-        - podSelector:
-            matchLabels:
-              app: order-service
   egress:
     - to:
         - podSelector:
@@ -217,7 +204,7 @@ spec:
       ports:
         - protocol: TCP
           port: 5432
-    # Service-to-service: orders and order-service fetch prices.
+    # Service-to-service: orders fetches prices.
     - to:
         - podSelector:
             matchLabels:
@@ -257,7 +244,6 @@ spec:
                 values:
                   - auth
                   - product-service
-                  - order-service
                   - orders
                   - user-service
       ports:

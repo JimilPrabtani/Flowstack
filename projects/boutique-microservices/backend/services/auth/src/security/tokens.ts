@@ -1,5 +1,6 @@
 /**
- * Token issuance and verification.
+ * Token issuance. Verification of *access* tokens lives in shared/auth.ts,
+ * since every service does it; only the auth service signs.
  *
  * REPLACES: `token: user.id.toString()` — the old scheme handed the client
  * its own primary key and then trusted whatever ID came back in the
@@ -14,12 +15,9 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
 import { randomUUID } from 'crypto';
 import { config } from '../config/env';
+import { AccessTokenPayload } from '../../../../shared/auth';
 
-export interface AccessTokenPayload {
-  sub: string;
-  email: string;
-  role: string;
-}
+export type { AccessTokenPayload };
 
 export interface RefreshTokenPayload {
   sub: string;
@@ -53,26 +51,12 @@ export function signRefreshToken(userId: string): { token: string; jti: string }
   return { token, jti };
 }
 
-export function verifyAccessToken(token: string): AccessTokenPayload {
-  const decoded = jwt.verify(token, config.jwt.accessSecret, {
-    issuer: config.jwt.issuer,
-    audience: config.jwt.audience,
-    algorithms: ['HS256'], // pin the algorithm — blocks `alg: none` and
-                           // HS/RS confusion attacks
-  }) as jwt.JwtPayload;
-
-  return {
-    sub: String(decoded.sub),
-    email: String(decoded.email ?? ''),
-    role: String(decoded.role ?? 'customer'),
-  };
-}
-
 export function verifyRefreshToken(token: string): RefreshTokenPayload {
   const decoded = jwt.verify(token, config.jwt.refreshSecret, {
     issuer: config.jwt.issuer,
     audience: config.jwt.audience,
-    algorithms: ['HS256'],
+    algorithms: ['HS256'], // pin the algorithm — blocks `alg: none` and
+                           // HS/RS confusion attacks
   }) as jwt.JwtPayload;
 
   if (!decoded.jti) {
@@ -84,16 +68,13 @@ export function verifyRefreshToken(token: string): RefreshTokenPayload {
 
 /** Milliseconds until a refresh token expires — used to set the DB row's TTL. */
 export function refreshTtlMs(): number {
-  const ttl = config.jwt.refreshTtl;
-  const match = /^(\d+)([smhd])$/.exec(ttl);
+  const match = /^(\d+)([smhd])$/.exec(config.jwt.refreshTtl);
   if (!match) return 7 * 24 * 60 * 60 * 1000;
-  const value = Number(match[1]);
-  const unit = match[2];
   const multipliers: Record<string, number> = {
     s: 1000,
     m: 60 * 1000,
     h: 60 * 60 * 1000,
     d: 24 * 60 * 60 * 1000,
   };
-  return value * multipliers[unit];
+  return Number(match[1]) * multipliers[match[2]];
 }

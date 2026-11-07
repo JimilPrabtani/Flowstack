@@ -1,7 +1,7 @@
 <p align="center">
-  <h1 align="center">🚀 DevOps + AIOps Playbook</h1>
+  <h1 align="center">🚀 Flowstack — DevOps + AIOps Playbook</h1>
   <p align="center">
-    An end-to-end DevOps project with AIOps integration — from local development to production on AWS EKS, with CI/CD, GitOps, observability, and an AI-powered SRE assistant.
+    An end-to-end DevOps project with AIOps integration — from local development to production on AWS EKS, with CI/CD, GitOps, observability, and an AI-powered SRE assistant. Demo storefront: <b>Flowstack Store</b> (minimal e-commerce).
   </p>
 </p>
 
@@ -32,7 +32,7 @@
 
 A production-style DevOps project that demonstrates how modern systems are designed, deployed, and operated — with AI-powered operations built in.
 
-- A **7-service e-commerce microservices app** (React + Node.js + PostgreSQL)
+- A **6-service e-commerce microservices app** (React + Node.js + PostgreSQL) — demo storefront **Flowstack Store**
 - **Containerised** with Docker, orchestrated on **Kubernetes (AWS EKS)**
 - Infrastructure provisioned with **Terraform** — VPC (public + private subnets), EKS, ECR, ArgoCD, monitoring
 - **CI/CD** with GitHub Actions using **OIDC** — no long-lived AWS keys
@@ -74,8 +74,8 @@ That's it. Node.js is only needed if you want to run services outside Docker.
 ### Step 1 — Clone
 
 ```bash
-git clone https://github.com/jimilprabtani/DevOps-Project-02.git
-cd DevOps-Project-02
+git clone https://github.com/JimilPrabtani/Flowstack.git
+cd Flowstack
 ```
 
 ### Step 2 — Create your `.env`
@@ -137,7 +137,7 @@ curl http://localhost:3000/healthz     # frontend → {"status":"ok"}
 
 | URL | What |
 |-----|------|
-| **http://localhost:3000** | ☀️ Sunfreaks landing page |
+| **http://localhost:3000** | Flowstack Store home + shop |
 | http://localhost:3000/shop | The store |
 | http://localhost:3000/products | Product catalogue |
 | http://localhost:3000/register | Create an account |
@@ -202,7 +202,7 @@ docker compose exec postgres psql -U boutique_app -d auth_db
 
 - **`/profile` returns 404 for newly registered accounts.** Registration writes to `auth_db.users`, but the user-service reads `users_db.users`, and nothing synchronises them. This is a pre-existing data-model split — fixing it properly means one shared user store or a registration event.
 - **The waitlist form on the landing page does not submit anywhere.** No backend route exists; it validates client-side only and is marked `TODO` in the code.
-- **`order-service` (port 3004) is unreachable.** The gateway reads `ORDERS_SERVICE_URL`, never `ORDER_SERVICE_URL`, so this service runs but receives no traffic. It duplicates `orders` and needs a product decision.
+- ~~**`order-service` (port 3004) is unreachable.**~~ Resolved: it duplicated `orders`, was never routed to, and enforced no authentication. Removed along with its manifest, compose block, ECR repository and CI matrix entries.
 
 </details>
 
@@ -638,12 +638,14 @@ devops-ai-playbook/
 │   │   │       ├── theme.ts             #        MUI theme (store)
 │   │   │       └── services/tokenStore.ts #      In-memory token (never localStorage)
 │   │   ├── backend/
-│   │   │   ├── SHARED-CODE.md           #      Why security code is duplicated
-│   │   │   └── services/                #      6 Node.js microservices
+│   │   │   ├── tsconfig.base.json       #      Compiler options, shared
+│   │   │   ├── shared/                  #      Imported by every service
+│   │   │   │   ├── env.ts               #        Fail-fast env readers
+│   │   │   │   └── auth.ts              #        JWT verification, route guards
+│   │   │   └── services/                #      5 Node.js microservices
 │   │   │       └── <service>/src/
-│   │   │           ├── config/env.ts    #        Fail-fast env validation
-│   │   │           ├── middleware/auth.ts #      JWT verification
-│   │   │           └── security/        #        Token signing, validation
+│   │   │           ├── config/env.ts    #        This service's config object
+│   │   │           └── security/        #        Token signing (auth only)
 │   │   └── database/init/               #      Local schema bootstrap
 │   │
 │   ├── Infrastructure/                  #    Terraform
@@ -757,7 +759,7 @@ The best way to understand this project is as a story where each tool exists to 
 
 A **monolith** is one big program that does everything — login, products, orders — in a single codebase and process. Simple to start, but painful to scale: if the orders feature crashes, the whole store goes down, and to update one line you redeploy everything.
 
-**Microservices** split the app into small, independent programs that each do one job and talk over the network. This project has 7: frontend, gateway, auth, product-service, order-service, orders, user-service. If the product service crashes, the login page still works. Each lives in its own folder under `projects/boutique-microservices/backend/services/` with its own `package.json` — that independence is the whole point.
+**Microservices** split the app into small, independent programs that each do one job and talk over the network. This project has 6: frontend, gateway, auth, product-service, orders, user-service. If the product service crashes, the login page still works. Each lives in its own folder under `projects/boutique-microservices/backend/services/` with its own `package.json` — that independence is the whole point.
 
 The trade-off: you gain resilience and independent deployment, but now you manage 7 things instead of 1. Most of the rest of this project exists to handle that burden.
 
@@ -1121,7 +1123,7 @@ Never commit `.env`, `terraform.tfvars`, `*.tfstate`, or any file containing a r
 
 ## 📄 License
 
-Open source and available for educational purposes.
+Licensed under MIT — see [LICENSE](LICENSE).
 
 ---
 

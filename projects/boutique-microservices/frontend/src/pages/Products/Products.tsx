@@ -42,41 +42,19 @@ const Products: React.FC = () => {
   const { addItem } = useCart();
 
   const categories = [
-    'clothing',
-    'accessories',
-    'shoes',
-    'bags',
-    'jewelry',
+    'Electronics',
+    'Clothing',
+    'Home',
+    'Accessories',
+    'Shoes',
   ];
 
-  const brands = [
-    'Gucci',
-    'Prada',
-    'Louis Vuitton',
-    'Chanel',
-    'Hermès',
-    'Dior',
-    'Versace',
-    'Burberry',
-  ];
-
-  const sizes = [
-    'XS', 'S', 'M', 'L', 'XL', 'XXL',
-    '36', '37', '38', '39', '40', '41', '42', '43', '44', '45',
-    'One Size',
-  ];
-
-  const colors = [
-    'Black', 'White', 'Beige', 'Brown', 'Gray', 'Navy',
-    'Red', 'Blue', 'Green', 'Pink', 'Gold', 'Silver',
-  ];
+  const brands = ['Flowstack Basics'];
 
   useEffect(() => {
     const loadProducts = async () => {
-      console.log('[Products] Starting to load products...');
       try {
         const allProducts = await productService.getAll();
-        console.log('[Products] Products loaded:', allProducts.length);
         setProducts(allProducts);
         setFilteredProducts(allProducts);
       } catch (error) {
@@ -196,7 +174,7 @@ const Products: React.FC = () => {
         <Box sx={{ flexGrow: 1, minWidth: 260 }}>
           <SearchBar
             onSearch={setSearchQuery}
-            placeholder="Search luxury products..."
+            placeholder="Search products..."
           />
         </Box>
         
@@ -302,8 +280,6 @@ const Products: React.FC = () => {
                 onFilterChange={handleFilterChange}
                 categories={categories}
                 brands={brands}
-                sizes={sizes}
-                colors={colors}
                 maxPrice={maxPrice}
               />
             </Grid>
@@ -336,8 +312,6 @@ const Products: React.FC = () => {
           }}
           categories={categories}
           brands={brands}
-          sizes={sizes}
-          colors={colors}
           maxPrice={maxPrice}
         />
       </Drawer>

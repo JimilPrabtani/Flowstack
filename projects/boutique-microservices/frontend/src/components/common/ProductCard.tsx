@@ -48,7 +48,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     if (product.imageUrl) {
       return product.imageUrl;
     }
-    return '/images/placeholder.svg';
+    return '';
   };
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -108,13 +108,30 @@ const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <Card sx={cardSx}>
       <Box sx={{ position: 'relative', overflow: 'hidden' }}>
-        <CardMedia
-          component="img"
-          sx={mediaSx}
-          image={getImageSrc()}
-          alt={product.name}
-          onError={handleImageError}
-        />
+        {getImageSrc() ? (
+          <CardMedia
+            component="img"
+            sx={mediaSx}
+            image={getImageSrc()}
+            alt={product.name}
+            onError={handleImageError}
+          />
+        ) : (
+          <Box
+            sx={{
+              ...(variant === 'list' ? { width: 190, height: 190 } : { height: 240, width: '100%' }),
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#F3F4F6',
+              color: '#9CA3AF',
+              fontWeight: 700,
+              fontSize: '2rem',
+            }}
+          >
+            {product.name.charAt(0).toUpperCase()}
+          </Box>
+        )}
         
         {product.isNew && (
           <Chip

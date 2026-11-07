@@ -20,7 +20,7 @@ import axios from 'axios';
 import { query, getPool } from '../database/connection';
 import { Order, ServiceResponse } from '../types';
 import { config } from '../config/env';
-import { requireAuth, requireRole, AuthedRequest } from '../middleware/auth';
+import { requireAuth, requireRole, AuthedRequest } from '../../../../shared/auth';
 
 const router = express.Router();
 

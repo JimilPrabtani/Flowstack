@@ -32,7 +32,7 @@ import {
   validateRegister,
   ValidationError,
 } from '../security/validate';
-import { requireAuth, AuthedRequest } from '../middleware/auth';
+import { requireAuth, AuthedRequest } from '../../../../shared/auth';
 
 const router = express.Router();
 

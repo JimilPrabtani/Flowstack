@@ -1,0 +1,18 @@
+{
+  // Path options (outDir/rootDir/include) stay in each service's tsconfig:
+  // TypeScript resolves those relative to the file that declares them, so a
+  // base file cannot express them for its extenders.
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
+  }
+}

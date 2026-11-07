@@ -16,7 +16,7 @@
 import express, { Request, Response } from 'express';
 import { query } from '../database/connection';
 import { UserProfile, Address, ServiceResponse } from '../types';
-import { requireAuth, AuthedRequest } from '../middleware/auth';
+import { requireAuth, AuthedRequest } from '../../../../shared/auth';
 
 const router = express.Router();
 
@@ -49,8 +49,37 @@ router.get('/profile', async (req: Request, res: Response) => {
       [user.sub]
     );
 
+    // Lazy-provision: accounts are created in auth_db on register, but this
+    // service reads users_db. First profile read creates the row from the
+    // verified JWT so /profile works for newly registered accounts.
     if (result.rows.length === 0) {
-      return res.status(404).json({ success: false, error: 'User not found' });
+      const email = typeof (user as any).email === 'string' ? (user as any).email : `${String(user.sub)}@local`;
+      const provisioned = await query(
+        `INSERT INTO users (id, email, first_name, last_name, role)
+         VALUES ($1, $2, '', '', 'customer')
+         ON CONFLICT (id) DO NOTHING
+         RETURNING id, email, first_name, last_name, role, created_at, updated_at`,
+        [user.sub, email]
+      );
+      const row = provisioned.rows[0];
+      if (!row) {
+        return res.status(404).json({ success: false, error: 'User not found' });
+      }
+      const response: ServiceResponse<UserProfile> = {
+        success: true,
+        data: {
+          id: row.id,
+          email: row.email,
+          firstName: row.first_name,
+          lastName: row.last_name,
+          role: row.role,
+          preferences: { currency: 'USD', language: 'en', newsletter: true, promotions: true },
+          addresses: [],
+          createdAt: row.created_at,
+          updatedAt: row.updated_at,
+        },
+      };
+      return res.json(response);
     }
 
     const dbUser = result.rows[0];

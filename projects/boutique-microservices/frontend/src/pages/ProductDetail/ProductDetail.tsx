@@ -422,8 +422,8 @@ const ProductDetail: React.FC = () => {
                 <Typography variant="body2" paragraph sx={{ lineHeight: 1.7, color: 'rgba(250, 244, 232, 0.85)' }}>
                   {product.description}
                 </Typography>
-                <Typography variant="body2" paragraph sx={{ lineHeight: 1.7, color: 'rgba(250, 244, 232, 0.7)' }}>
-                  Experience the perfect blend of luxury and functionality. Crafted with attention to detail and using clean materials, this formula exemplifies excellence in biotech R&D.
+                <Typography variant="body2" paragraph sx={{ lineHeight: 1.7 }}>
+                  Quality checked, demo-ready product from the Flowstack catalog.
                 </Typography>
               </TabPanel>
               
@@ -448,8 +448,8 @@ const ProductDetail: React.FC = () => {
               
               <TabPanel value={tabValue} index={3}>
                 <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>Shipping Information</Typography>
-                <Typography variant="body2" sx={{ lineHeight: 1.7, color: 'rgba(250, 244, 232, 0.8)' }}>
-                  • Free shipping on orders over $500<br/>
+                <Typography variant="body2" sx={{ lineHeight: 1.7 }}>
+                  • Free shipping on orders over $50<br/>
                   • Standard delivery: 3-5 business days<br/>
                   • 30-day return policy
                 </Typography>

@@ -74,7 +74,7 @@ const Cart: React.FC = () => {
   }
 
   const subtotal = total;
-  const shipping = subtotal > 500 ? 0 : 15;
+  const shipping = subtotal > 50 ? 0 : 5;
   const tax = subtotal * 0.08;
   const finalTotal = subtotal + shipping + tax;
 
@@ -237,8 +237,8 @@ const Cart: React.FC = () => {
                 </Box>
                 
                 {shipping > 0 && (
-                  <Typography variant="caption" sx={{ display: 'block', mb: 1.5, color: 'rgba(250, 244, 232, 0.5)' }}>
-                    Add ${(500 - subtotal).toFixed(2)} more for free shipping
+                  <Typography variant="caption" sx={{ display: 'block', mb: 1.5 }}>
+                    Add ${(50 - subtotal).toFixed(2)} more for free shipping
                   </Typography>
                 )}
                 

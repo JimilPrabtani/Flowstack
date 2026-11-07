@@ -56,8 +56,8 @@ const Login: React.FC = () => {
             <Typography component="h1" variant="h3" sx={{ fontWeight: 700, fontSize: '1.75rem', mb: 0.5 }}>
               Sign In
             </Typography>
-            <Typography variant="body2" sx={{ color: 'rgba(250, 244, 232, 0.6)' }}>
-              Welcome back to Sunfreaks
+            <Typography variant="body2">
+              Welcome back to Flowstack
             </Typography>
           </Box>
           

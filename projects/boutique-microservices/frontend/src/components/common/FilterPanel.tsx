@@ -36,8 +36,8 @@ interface FilterPanelProps {
   onFilterChange: (filters: FilterOptions) => void;
   categories: string[];
   brands: string[];
-  sizes: string[];
-  colors: string[];
+  sizes?: string[];
+  colors?: string[];
   maxPrice: number;
 }
 
@@ -45,8 +45,8 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   onFilterChange,
   categories,
   brands,
-  sizes,
-  colors,
+  sizes = [],
+  colors = [],
   maxPrice,
 }) => {
   const [filters, setFilters] = useState<FilterOptions>({

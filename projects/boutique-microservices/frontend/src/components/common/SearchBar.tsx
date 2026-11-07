@@ -21,7 +21,7 @@ interface SearchBarProps {
 const SearchBar: React.FC<SearchBarProps> = ({
   onSearch,
   suggestions = [],
-  placeholder = "Search luxury products...",
+  placeholder = "Search products...",
 }) => {
   const [query, setQuery] = useState('');
 

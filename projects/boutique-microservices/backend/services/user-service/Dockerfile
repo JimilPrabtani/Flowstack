@@ -1,36 +1,34 @@
 # User Service Dockerfile
+#
+# Build context is backend/, not this directory, so that shared/ is visible.
+# Dependencies install at /app rather than /app/services/user-service so that
+# both the service and shared/ resolve node_modules by Node's upward lookup.
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+COPY services/user-service/package*.json ./
 RUN npm install
 
-# Copy source code
-COPY . .
+COPY tsconfig.base.json ./
+COPY shared/ ./shared/
+COPY services/user-service/ ./services/user-service/
 
-# Build TypeScript
-RUN npm run build
+RUN npx tsc --project services/user-service
 
 # Production stage
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy package files and install production dependencies only
-COPY package*.json ./
-RUN npm install --production && npm cache clean --force
+COPY services/user-service/package*.json ./
+RUN npm install --omit=dev && npm cache clean --force
 
-# Copy built application
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/services/user-service/dist ./dist
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodejs -u 1001
-
+RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
 USER nodejs
 
 EXPOSE 3006
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/services/user-service/src/index.js"]

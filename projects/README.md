@@ -96,7 +96,7 @@ This builds all service images and starts containers for every service plus Post
 docker ps
 ```
 
-You should see containers for: `frontend`, `gateway`, `auth`, `product-service`, `order-service`, `orders`, `user-service`, `postgres`, `prometheus`, `grafana`.
+You should see containers for: `frontend`, `gateway`, `auth`, `product-service`, `orders`, `user-service`, `postgres`, `prometheus`, `grafana`.
 
 ### Access the application
 
@@ -457,7 +457,7 @@ sum by (pod) (container_memory_working_set_bytes{namespace="boutique"})
 kube_pod_container_status_restarts_total{namespace="boutique"}
 
 # Which services are up
-up{job=~"gateway|auth|product-service|order-service|orders|user-service"}
+up{job=~"gateway|auth|product-service|orders|user-service"}
 
 # Node.js heap memory
 nodejs_heap_size_used_bytes

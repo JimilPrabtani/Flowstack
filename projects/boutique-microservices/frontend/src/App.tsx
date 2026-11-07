@@ -5,11 +5,11 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
 import Layout from './components/Layout/Layout';
-import Landing from './pages/Landing/Landing';
 import Home from './pages/Home/Home';
 import Products from './pages/Products/Products';
 import ProductDetail from './pages/ProductDetail/ProductDetail';
 import Cart from './pages/Cart/Cart';
+import Checkout from './pages/Checkout/Checkout';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Profile from './pages/Profile/Profile';
@@ -25,16 +25,21 @@ function App() {
         <CartProvider>
           <Router>
             <Routes>
-              {/* The Sunfreaks landing page sits OUTSIDE Layout so it renders
-                  full-bleed without the store's app bar and footer. */}
-              <Route path="/" element={<Landing />} />
-
-              {/* The store keeps its existing chrome. */}
+              {/* Flowstack minimal store — home page is the shop. */}
               <Route element={<Layout />}>
+                <Route path="/" element={<Home />} />
                 <Route path="/shop" element={<Home />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/products/:id" element={<ProductDetail />} />
                 <Route path="/cart" element={<Cart />} />
+                <Route
+                  path="/checkout"
+                  element={
+                    <ProtectedRoute>
+                      <Checkout />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route

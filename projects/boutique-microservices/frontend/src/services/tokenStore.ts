@@ -33,8 +33,7 @@ export const tokenStore = {
   },
 
   clear(): void {
-    accessToken = null;
-    listeners.forEach((listener) => listener(null));
+    tokenStore.set(null);
   },
 
   subscribe(listener: Listener): () => void {

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import { Product } from '../types';
 
 interface CartItem extends Product {
@@ -15,7 +15,8 @@ type CartAction =
   | { type: 'ADD_ITEM'; payload: Product }
   | { type: 'REMOVE_ITEM'; payload: string }
   | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
-  | { type: 'CLEAR_CART' };
+  | { type: 'CLEAR_CART' }
+  | { type: 'HYDRATE'; payload: CartItem[] };
 
 const initialState: CartState = {
   items: [],
@@ -25,13 +26,21 @@ const initialState: CartState = {
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
+    case 'HYDRATE': {
+      return {
+        ...state,
+        items: action.payload,
+        total: calculateTotal(action.payload),
+        itemCount: calculateItemCount(action.payload),
+      };
+    }
     case 'ADD_ITEM': {
       const existingItem = state.items.find(item => item.id === action.payload.id);
-      
+
       if (existingItem) {
         const updatedItems = state.items.map(item =>
           item.id === action.payload.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: Math.min(item.quantity + 1, item.inventory || 99) }
             : item
         );
         return {
@@ -41,7 +50,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
           itemCount: calculateItemCount(updatedItems),
         };
       }
-      
+
       const newItems = [...state.items, { ...action.payload, quantity: 1 }];
       return {
         ...state,
@@ -50,7 +59,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         itemCount: calculateItemCount(newItems),
       };
     }
-    
+
     case 'REMOVE_ITEM': {
       const newItems = state.items.filter(item => item.id !== action.payload);
       return {
@@ -60,10 +69,10 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         itemCount: calculateItemCount(newItems),
       };
     }
-    
+
     case 'UPDATE_QUANTITY': {
       const { id, quantity } = action.payload;
-      
+
       if (quantity === 0) {
         const newItems = state.items.filter(item => item.id !== id);
         return {
@@ -73,11 +82,11 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
           itemCount: calculateItemCount(newItems),
         };
       }
-      
+
       const newItems = state.items.map(item =>
         item.id === id ? { ...item, quantity } : item
       );
-      
+
       return {
         ...state,
         items: newItems,
@@ -85,10 +94,10 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         itemCount: calculateItemCount(newItems),
       };
     }
-    
+
     case 'CLEAR_CART':
       return initialState;
-    
+
     default:
       return state;
   }
@@ -112,8 +121,32 @@ interface CartContextType extends CartState {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+const STORAGE_KEY = 'flowstack-cart';
+
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const items = JSON.parse(raw) as CartItem[];
+        if (Array.isArray(items) && items.length > 0) {
+          dispatch({ type: 'HYDRATE', payload: items });
+        }
+      }
+    } catch {
+      // ignore corrupt storage
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.items));
+    } catch {
+      // storage full or unavailable — cart still works in memory
+    }
+  }, [state.items]);
 
   const addItem = (product: Product) => {
     dispatch({ type: 'ADD_ITEM', payload: product });
